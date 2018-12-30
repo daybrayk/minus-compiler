@@ -1,0 +1,27 @@
+/*
+  CIS*4650 - Compilers Checkpoint 3
+  File: 4.cm
+  Author: Braydon Johnson & Neivin Mathew
+  
+  Description:
+  This program creates an array and passes it in to a
+  function for modification. It will then output the
+  value at the index that was modified.
+
+  The program intends to demonstrate the passing of
+  arguments to functions.
+*/
+
+void modifyIndex(int array[]){
+  array[1] = 100;
+}
+
+void main(void)
+{
+  int array[5];
+  
+  array[1] = 50;
+  modifyIndex(array);
+
+  output(array[1]);
+}

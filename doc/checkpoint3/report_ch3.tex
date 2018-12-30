@@ -1,0 +1,162 @@
+\documentclass[12pt, letterpaper]{article}
+
+\linespread{1.5}
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=C,
+  aboveskip=2mm,
+  belowskip=2mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=false,
+  breakatwhitespace=true,
+  tabsize=4
+}
+
+%%
+%your submission should include a document describing the entire compiler construction process.  In addition to what has been done, the overall design, lessons gained in the implementation process, assumptions and limitations as well as possible improvements, and the contributions of 
+%each member if relevant, you can outline any major changes in structure or design that took place over time (i.e. identify significant changes from previous checkpoints in the modules that were implemented earlier). Some of the things you might want to talk about include issues you encountered in translating abstract syntax into assembly code, error handling, problems encountered during design and implementationand their solutions, source language issues, attempted repair of detected errors if implemented, and the like
+%
+
+\title{\LARGE{\textbf{Compilers - Checkpoint Three}}}
+\author{Braydon Johnson, Neivin Mathew}
+\begin{document}
+\maketitle
+
+\section{Summary}
+Over the course of three checkpoints, a compiler for the C- language was constructed.
+
+The compiler can read a C- program, build an abstract syntax tree, perform semantic analysis on the program and then finally convert it into intermediate assembly code targeted at the Tiny Machine architecture.
+
+\section{Compiler Construction Process}
+\subsection{Initial Steps}
+To begin the project, we decided to use version control to keep track of our code and coordinate work between the group. Using a private repository on Github allowed us to collaborate effectively.
+
+We also agreed to use Java as our language of choice for building the compiler. Using the powerful JFlex and CUP libraries, as well as the concepts of function overloading and class inheritance allowed us to focus more on the process of building the syntax tree, performing semantic analysis and generating intermediate code.
+
+To begin the project, we used professor Fei Song's provided code as a starting point from \texttt{java\_tiny.tgz}
+
+\subsection{Abstract Syntax Tree}
+Checkpoint One was built using an incremental process as suggested in the design document.
+
+To build the scanning and parsing portions of the compiler, we began by analyzing
+the C- specification document. First, we built the scanner to recognize tokens for the
+language, and wrote all the grammar rules without simplifying them into ambiguous
+grammars.
+
+Next, we followed the recommended syntax tree structures for the C- language to
+create the necessary classes required to represent the syntax tree. After writing all the
+required classes, we defined the methods to display the elements of the syntax tree.
+
+With the structure of the tree completed, we added the embedded code into the parser
+to actually build the syntax tree. After the program was able to build the syntax tree successfully, we introduced new classes that would consume errors for their corresponding
+types. These enabled the parser to recover from syntax errors gracefully.
+
+Finally, we simplified some of the grammar rules by using the CUP directives for
+precedence and associativities of mathematical operations.
+
+\subsection{Symbol Table and Semantic Analysis}
+The framework for semantic analysis was also built using an incremental process, similar to that which was used in checkpoint one.
+
+First, we improved upon our initial design from checkpoint one. We improved our error recovery system and enabled the compiler to catch more errors and gracefully resume parsing from that point.
+
+Next, we implemented an abstract structure for the symbol table that would be able to seamlessly create new scopes, add new symbols, retrieve symbols, and check for the existence of symbols in the program. Creating a logical layer of abstraction for the symbol table was imperative to the next step --- implementing type checking.
+
+Finally, we added type checking to the compiler. We used the concepts of function overloading and type coercion to break down the checking of types. Each method would check its corresponding syntax tree structure for type validity.
+
+\subsection{Code Generation}
+Code generation was also done using an incremental process.
+
+First, we took some time to understand the TM Simulator instructions by reading and testing the sample assembly code and the corresponding C- code. This enabled us to learn how to translate C- code into assembly code by hand. 
+
+After understanding the TM Simulator instructions, we were able to recognize what actions the standard prelude, predefined input/output routines, and the finale were supposed to perform. This enabled us to generate the assembly code for the various structures of the syntax tree.
+
+We began by generating the assembly code for expressions only. We then began to generate code for array accesses and and function calls. After this, we converted the control structures like conditionals, while loops and function calls into linear calling sequences.
+
+\subsection{Modifications to Old Code}
+For the final project, we improved a number of mistakes that were made in previous checkpoints.
+
+Firstly, initially our program would simply print everything out to \texttt{stdout}, but now outputs the results to the proper files.
+
+For the first checkpoint, we improved our syntax tree display, fixed minor token errors, some precedence errors and also greatly improved our error recovery for the compiler.
+
+For the second checkpoint, we improved the printing of the symbol table and included the input and output functions that we had previously missed. Additionally, we adapted the symbol table to also store the offsets from the frame pointer and the addresses for the declared functions. 
+
+\section{Retrospective}
+\subsection{Lessons Learned}
+Over the course of the project, we understood the importance of building the project incrementally, since it allowed us to break down a large problem into smaller ones. It also allowed us to pinpoint where our errors were, since we knew the project was building successfully before adding new features that did not work.
+
+Using Git for version control and collaboration also taught us the importance of version control, which gave us the ability to roll back mistakes we made and enabled group members to see what new parts had been added to the project since we last saw it.
+
+Additionally, we also realized how to divide work between the group effectively so as to complete the project implementation on time, while leaving adequate time for testing.
+
+\section{Assumptions and Limitations}
+Some of the assumptions and limitations of the project are as follows:
+\begin{itemize}
+\item We assume that functions with \texttt{void} return types do not return anything. The function may have a \texttt{return} statement, but it cannot return an expression, even if it is declared to be \texttt{void}. 
+
+The following code sample will produce an error:
+\begin{lstlisting}
+	void void_function(void){
+		void v;
+		return v;
+	}
+\end{lstlisting}
+
+\item We assume that function parameters will not be defined as void. Our compiler will produce an error statement for void variables, as mentioned above but will still add void variables to new scopes. The following function signature would be invalid:
+\begin{lstlisting}
+	int my_function(void x, void y)
+\end{lstlisting}
+
+\item If a function is declared with an invalid return type, it is assigned a void return type so as to recover from the syntax error gracefully. The following invalid function declaration: 
+\begin{lstlisting}
+	invalidtypehere function(void x, void y)
+\end{lstlisting}
+
+will result in:
+\begin{lstlisting}
+	void function(void x, void y)
+\end{lstlisting}
+
+\end{itemize}
+
+\subsection{Improvements}
+Some possible improvements that could be made are as follows:
+\begin{itemize}
+\item The order of the function parameters should be checked and matched with the parameter types mentioned in the function signature.
+\item Variables that are defined as \texttt{void} must be dealt with more robustly. A possible solution is to disallow them altogether since they cannot actually contain anything, and are simply a byproduct of the grammar rules.
+\item Currently, error messages for semantic errors only offer primitive information about the error. Improving detection and providing more detailed error messages would enhance the functionality of the compiler.
+\end{itemize}
+
+\section{Contributions}
+\subsection{Braydon Johnson}
+\begin{itemize}
+\setlength\itemsep{0em}
+\item Implementing code generation
+\end{itemize}
+\subsection{Neivin Mathew}
+\begin{itemize}
+\setlength\itemsep{0em}
+\item Improving and adapting code from previous checkpoints
+\item Testing and documentation
+\end{itemize}
+
+\section{Acknowledgments}
+For the third checkpoint, we built upon our existing code from the first and second checkpoint.
+
+In Checkpoint One, we used the starter code provided by Professor Song in \texttt{java\_tiny.tgz} and also followed the recommended syntax tree structure for the C- language from the course slides.
+
+\end{document}

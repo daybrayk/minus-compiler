@@ -1,0 +1,131 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{kpfonts}
+\usepackage[T1]{fontenc}
+
+% custom titles
+\usepackage{titlesec}
+
+% fix broken title numbering with 2016 titlesec update
+\usepackage{etoolbox}
+
+\makeatletter
+\patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+\patchcmd{\ttlh@hang}{\noindent}{}{}{}
+\makeatother
+%%%
+
+\titlespacing*\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing*\subsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing*\subsubsection{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+% Package for double spacing
+\usepackage{setspace}
+\usepackage{ragged2e}
+
+% Set 1.0 inch margins
+\usepackage[margin=1.0in, headheight=15pt]{geometry}
+\usepackage{enumitem}
+
+% Use images and graphics
+\usepackage{graphicx}
+\usepackage{float}
+
+% Use nicer headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\rhead{CIS4650 - Checkpoint I}
+
+%double spaced lines in the whole document
+\doublespacing
+
+\title{Checkpoint I}
+
+\begin{document}
+\begin{titlepage}
+    \centering
+    \vspace*{\baselineskip}
+    \rule{\textwidth}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt}
+    \rule{\textwidth}{0.4pt}\\[1.5\baselineskip]
+    {\LARGE \textsc{Compilers \\ Checkpoint One Report}}\\[\baselineskip]
+	\rule{\textwidth}{0.4pt}\vspace*{-\baselineskip}\vspace{4pt}    
+    \rule{\textwidth}{2pt}\\[2\baselineskip]
+   
+    \vspace*{7\baselineskip}
+    \textsc{BY}
+    
+    \vspace*{0.25\baselineskip}
+    % List of authors in alphabetical order (by last name)
+    {\textsc{Braydon Johnson \\ Neivin Mathew} \par}
+    \vfill
+    {\scshape March 6, 2017} \\
+  \end{titlepage}
+  
+  
+% Table of Contents (no page numbers on contents)
+\pagenumbering{roman} %roman numerals for ToC
+\tableofcontents
+\lhead{} % remove default header from Contents page
+\clearpage
+\pagenumbering{arabic} %pagenumbering in arabic numbers
+    
+\section{Summary}
+For the first checkpoint, we implemented scanning and parsing for the C- language.
+
+The scanner can recognize valid tokens according to the C- specification and the parser will analyze the syntactic correctness of the programs. The compiler builds an Abstract Syntax Tree and can print out the structure of the program.
+
+The compiler can also recover from syntax errors by consuming invalid input until it reaches a valid structure according to the specification. It will try to output the structure which caused the error in most cases, or at least mention the line number of the error.
+
+\section{Design Process}
+\subsection{Implementation}
+The compiler project for Checkpoint One was built using an incremental process.\par
+To build the scanning and parsing portions of the compiler, we began by analyzing the C- specification document. First, we built the scanner to recognize tokens for the language, and wrote all the grammar rules without simplifying them into ambiguous grammars.\par
+Next, we followed the recommended syntax tree structures for the C- language to create the necessary classes required to represent the syntax tree. After writing all the required classes, we defined the methods to display the elements of the syntax tree.\par
+With the structure of the tree completed, we added the embedded code into the parser to actually build the syntax tree. After the program was able to build the syntax tree successfully, we introduced new classes that would consume errors for their corresponding types. These enabled the parser to recover from syntax errors gracefully.\par
+Finally, we simplified some of the grammar rules by using the CUP directives for precedence and associativities of mathematical operations.\par
+
+\subsection{Lessons Learned}
+We really understood the importance of building the project incrementally, since it allowed us to break down a large problem into multiple smaller problems. It also allowed us to pinpoint where our errors were, since we knew the project was building successfully before adding new features that did not work.\par
+Using Git for version control and collaboration also taught us the importance of version control, which gave us the ability to roll back mistakes we made and enabled group members to see what new parts had been added to the project since we last saw it.\par
+
+\section{Assumptions and Limitations}
+Some of the assumptions and limitations of the project are as follows:
+\begin{itemize}[leftmargin=12pt]
+\setlength\itemsep{0em}
+\item The scanner simply uses a regular expression to recognize comment blocks, rather than macro states. This could result in unexpected behaviour when comment blocks are nested within each other.
+\item The parser will try to consume invalid input until it find the next valid block. As such, it will display the location of the error by line number and abstract structure.
+\end{itemize}
+
+\section{Potential Improvements}
+Some possible improvements that could me made are as follows:
+\begin{itemize}[leftmargin=12pt]
+\setlength\itemsep{0em}
+\item Using macro states to recognize comment blocks from normal blocks could be a more robust way to recognize comments.
+\item Error messages could be more detailed and show the exact structure in which the syntax error occurred rather than just the list structure.
+
+\end{itemize}
+
+\section{Contributions}
+\subsection{Braydon Johnson}
+\begin{itemize}[leftmargin=12pt]
+\setlength\itemsep{0em}
+\item Writing Scanner regular expressions
+\item Writing Parser grammar rules
+\item Creating test files
+\end{itemize}
+
+\subsection{Neivin Mathew}
+\begin{itemize}[leftmargin=12pt]
+\setlength\itemsep{0em}
+\item Writing Parser grammar rules
+\item Building syntax tree classes, display methods and main program
+\item Writing documentation for the project
+\end{itemize}
+
+\section{Acknowledgments}
+For this project, we used some of Professor Song's starter code from \texttt{java\_tiny.tgz} as well as followed the recommended syntax tree structure for the C- language from the course slides.
+
+
+
+\end{document}
