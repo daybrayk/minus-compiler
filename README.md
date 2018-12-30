@@ -2,7 +2,7 @@
 This repository contains a compiler for the C- language written for the Compilers course offered at the University of Guelph (CIS4650) in Winter 2017.
 
 Browse this repository at your own risk if you are taking this course. I do not recommend copying anything from here verbatim as this is not a perfect solution.
-There are _**quite a few errors**_ in this code (especially in the generation of assembly code).
+There are _**quite a few errors**_ in this code.
 
 ## Authors
 - Neivin Mathew
